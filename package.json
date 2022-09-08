@@ -2,15 +2,15 @@
 	"name": "speedwapp",
 	"displayName": "Speedwapp",
 	"description": "Speedwapp is a visually builder that lets you create responsive websites with clean HTML & CSS effortlessly.",
-	"version": "0.8.0",
+	"version": "0.8.5",
 	"publisher": "speedwapp",
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"author": {
 		"name": "speedwapp"
 	},
-	"icon": "images/assets/logo-speedwapp.png",
+	"icon": "assets/images/logo-speedwapp.png",
   	"galleryBanner": {
-    	"color": "#111111",
+    	"color": "#eff1f3",
     	"theme": "light"
   	},
 	"engines": {
@@ -26,34 +26,52 @@
 	],
 	"activationEvents": [
 		"onLanguage:html",
+		"onCommand:speedwapp.newWithSpeedwapp",
 		"onCommand:speedwapp.editWithSpeedwapp"
 	],
 	"main": "./dist/extension.js",
 	"bugs": {
-		"url": "https://github.com/microsoft/vscode-wordcount/issues",
-		"email": "sean@contoso.com"
+		"url": "https://github.com/akambi/speedwapp-vscode/issues",
+		"email": "akambi@speedwapp.com"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/microsoft/vscode-wordcount.git"
+		"url": "https://github.com/akambi/speedwapp-vscode.git"
 	},
-	"homepage": "https://github.com/microsoft/vscode-wordcount/blob/main/README.md",
+	"homepage": "https://github.com/akambi/speedwapp-vscode/blob/master/README.md",
 	"contributes": {
 		"commands": [
 			{
 				"command": "speedwapp.editWithSpeedwapp",
-				"title": "Edit With Speedwapp Editor"
+				"title": "Edit With Speedwapp Builder"
+			},
+			{
+				"command": "speedwapp.newWithSpeedwapp",
+				"title": "New With Speedwapp Builder"
 			}
-		]
+		],
+		"menus": {
+			"commandPalette": [
+			  	{
+					"command": "speedwapp.editWithSpeedwapp",
+					"when": "editorLangId == html"
+			  	}
+			]
+		},
+		"keybindings": [
+			{
+				"command": "speedwapp.editWithSpeedwapp",
+				"key": "ctrl+shift+v",
+				"mac": "cmd+shift+v",
+				"when": "editorTextFocus && editorLangId == html"
+			},
+			{
+				"command": "speedwapp.newWithSpeedwapp",
+				"key": "ctrl+k n",
+				"mac": "cmd+k n"
+			}
+		]	
 	},
-	"keybindings": [
-		{
-			"command": "speedwapp.editWithSpeedwapp",
-			"key": "ctrl+shift+e",
-			"mac": "cmd+shift+e",
-			"when": "editorLangId == html"
-		}
-	],
 	"scripts": {
 		"vscode:prepublish": "npm run package",
 		"compile": "webpack",

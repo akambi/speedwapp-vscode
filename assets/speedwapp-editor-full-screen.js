@@ -1,180 +1,154 @@
-( function( $ ) {
+( function() {
 
     const vscode = acquireVsCodeApi();
     // Data used by speedwapp widget (editor)
     window.speedwapp_api_token = SpeedwappSettings.speedwapp_api_token;
 
-    function ajaxReturn(urlTo, datas, successFun) {
-        var response = '';
-        successFun(response);
-    }
+    const editorContainer = document.getElementById('speedwapp-editor-container');
+    const searchParams = new URL(location.toString()).searchParams;
+    const ID = searchParams.get('id');
 
-    var speedwappEditor = {
-        win: null,
-        editorContent: null,
+    const urlParts = window.location.href.split('/index.html');
+    const pageOrigin = urlParts.length ? './fake.html?id=' + ID : '';
 
-        editorLoaded: function() {
-            this.$swEditorContainer.removeClass('speedwapp-loading');
-        },
+    const editorContentElement = document.querySelector('#speedwapp-editor-content');
+    editorContainer.classList.add('speedwapp-loading');
 
-        initialize: function() {
-            this.$swEditorContent = $('#speedwapp-editor-content');
-            this.$swEditorContainer = $('#speedwapp-editor-container');
-            this.$swEditor = this.$swEditorContainer.find('#speedwapp-editor');
-            this.$swEditorContainer.addClass('speedwapp-loading');
+    let newFrame;
+    let editorContent = null;
 
-            this.initEditorContent();
-
-            // Switch to the Speedwapp editor
-            if (window.addEventListener) {
-                addEventListener("message", this.listener.bind(this), false);
-            } else {
-                attachEvent("onmessage", this.listener.bind(this));
-            }
-        },
-
-        setupEditorEvent: function() {
-            this.$previewButton.off('click');
-            this.$previewButton.on('click', function(event) {
-                event.preventDefault();
-                speedwappEditor.win.postMessage({
-                    data_type: 'preview_post'
-                }, SpeedwappSettings.wpurl);
-                return false;
-            });
-
-            this.$publishingButton.off('click');
-            this.$publishingButton.on('click', function(event) {
-                event.preventDefault();
-                speedwappEditor.win.postMessage({
-                    data_type: 'save_post'
-                }, SpeedwappSettings.wpurl);
-            });            
-        },
-        /**
-         * Handle displaying the builder
-         */
-        initEditorContent: function () {
-            var editorContent = this.$swEditorContent.val();
-
-            if (!editorContent) {
-                return;
-            }
-
-            var htmlTag = editorContent.match(/<[a-z][\s\S]*>/i);
-            if (htmlTag) {
-                this.editorContent = editorContent;
-            } else {
-                // if not HTML, wrap in a HTML node
-                this.editorContent = '<div>'+editorContent+'</div>';
-            }
-        },
-        listener: function (event) {
-//            if (!event || !event.source || event.source.app_domain !== 'https://speedwapp.com') {
-            if (!event || !event.source || event.source.app_domain !== 'https://sw-localhost') {
-                    return;
-            }
-
-        //    if (!speedwappEditor.win) {
-                speedwappEditor.win = event.source;
-        //    }
-
-            var self = this;
-            console.log('widget_check', speedwappEditor.win, event.data.type);
-
-            switch (event.data.type) {
-                case 'child_ready':
-                    break;
-                case 'widget_check':
-                    speedwappEditor.win.postMessage({
-                        data_type: 'widget_info',
-                        value: 'vscode',
-                        data: {
-                            postId: SpeedwappSettings.post_id,
-                            pageOrigin: SpeedwappSettings.page_origin,
-                            pageBaseHref: SpeedwappSettings.host,
-                        }
-                    }, SpeedwappSettings.wpurl);
-                    break;
-                case 'widget_export':
-                    const exportConfig = {
-                        url: event.data.url,
-                        passcode: event.data.passcode,
-                        published: event.data.published,
-                    };
-
-                    if(SpeedwappSettings.post_id) {
-                        exportConfig.action = 'save_swapp_zip';
-                        exportConfig.postId = SpeedwappSettings.post_id;
-                    } else {
-                        exportConfig.action = 'download_swapp_zip';
-                    }
-
-                    ajaxReturn('', exportConfig, function (response, status) {
-                        speedwappEditor.win.postMessage({
-                            data_type: 'widget_export_success',
-                            value: {
-                                http_code: status,
-                            }
-                        }, SpeedwappSettings.wpurl);
-                    });
-
-                    break;
-                case 'reload_iframe':
-                    if (newFrame && onFrameLoadedSw) {
-                        frameLoad();
-                    }
-                    break;
-                case 'copy_codes_to_workspace':
-                    vscode.postMessage({
-                        action: 'copy_codesource_to_workspace',
-                        html: event.data.html,
-                        js: event.data.js,
-                        css: event.data.css,
-                    });
-                    break;
-                case 'send_user_wp':
-                    vscode.postMessage({
-                        action: 'save_speedwapp_api_token',
-                        apiToken: event.data.apiToken,
-                    });
-                    break;
-                case 'manager_ready':
-                    if (SpeedwappSettings.post_json_data) {
-                        speedwappEditor.win.postMessage({
-                            data_type: 'load_json',
-                                value: {
-                                    content: SpeedwappSettings.post_json_data, data: {
-                                    pageTitle: SpeedwappSettings.page_title
-                                }
-                            }
-
-                        }, SpeedwappSettings.wpurl);
-                    } else if (this.editorContent) {
-                        speedwappEditor.win.postMessage({
-                            data_type: 'load_theme',
-                                value: {
-                                    content: this.editorContent , data: {
-                                        url: SpeedwappSettings.host,
-                                        pageTitle: SpeedwappSettings.page_title
-                                    }
-                                }
-                            },
-                            SpeedwappSettings.wpurl
-                        );
-                    }
-                    break;
-                case 'speedwapp_editor_ready':
-                    this.editorLoaded();
-                    break;
-                case 'init_widget_finish':
-                    break;
-            }
+    const onDomContentLoaded = e => {
+        const contentDocument = e.target ? (/** @type {HTMLDocument} */ (e.target)) : undefined;
+        if (contentDocument) {
+            // Workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=978325
+            setTimeout(() => {
+                contentDocument.open();
+                contentDocument.write(editorLoaderTemplate);
+                contentDocument.close();
+            }, 0);
         }
     };
 
-    $( document ).ready(function() {
-        speedwappEditor.initialize();
-    });
+    const createEditorIframe = () => {
+        const currentFrame = document.createElement('iframe');
+        currentFrame.setAttribute('id', 'speedwapp-editor');
+        currentFrame.setAttribute('name', 'speedwapp-editor');
+        currentFrame.setAttribute('frameborder', '0');
+        currentFrame.setAttribute('data-mode', 'post');
+        currentFrame.setAttribute('class', 'speedwapp-editor');
 
-}( window.jQuery ));
+        // We should just be able to use srcdoc, but I wasn't
+        // seeing the service worker applying properly.
+        // Fake load an empty on the correct origin and then write real html
+        // into it to get around this.
+        currentFrame.src = './fake.html?id=' + ID;
+
+        editorContainer.appendChild(currentFrame);
+
+        return currentFrame;
+    };
+
+    const loadEditorIframe = () => {
+        if (newFrame) {
+            newFrame.contentWindow.removeEventListener('DOMContentLoaded', onDomContentLoaded);
+            newFrame.parentNode.removeChild(newFrame);
+        }
+
+        // create a new frame.
+        newFrame = createEditorIframe();
+        if (newFrame && newFrame.contentWindow) {
+            newFrame.contentWindow.addEventListener('DOMContentLoaded', onDomContentLoaded);
+        }
+    };
+
+    const initEditorContent = () => {
+        editorContent = editorContentElement.value;
+
+        if (!editorContent) {
+            return;
+        }
+    };
+
+    const messageListener = (event) => {
+        if (!event || !event.source || event.source.app_domain !== 'https://speedwapp.com') {
+        // if (!event || !event.source || event.source.app_domain !== 'https://sw-localhost') {
+                return;
+        }
+
+        switch (event.data.type) {
+            case 'widget_check':
+                event.source.postMessage({
+                    data_type: 'widget_info',
+                    value: 'vscode',
+                    data: {
+                        pageOrigin,
+                        pageBaseHref: SpeedwappSettings.host,
+                    }
+                }, SpeedwappSettings.wpurl);
+                break;
+            case 'reload_iframe':
+                loadEditorIframe();
+                break;
+            case 'copy_codes_to_workspace':
+                vscode.postMessage({
+                    action: 'copy_codesource_to_workspace',
+                    html: event.data.html,
+                    js: event.data.js,
+                    css: event.data.css,
+                });
+                break;
+            case 'send_user_wp':
+                vscode.postMessage({
+                    action: 'save_speedwapp_api_token',
+                    apiToken: event.data.apiToken,
+                });
+                break;
+            case 'manager_ready':
+                if (SpeedwappSettings.post_json_data) {
+                    event.source.postMessage({
+                        data_type: 'load_json',
+                            value: {
+                                content: SpeedwappSettings.post_json_data, data: {
+                                pageTitle: SpeedwappSettings.page_title
+                            }
+                        }
+
+                    }, SpeedwappSettings.wpurl);
+                } else if (editorContent) {
+                    event.source.postMessage({
+                        data_type: 'load_theme',
+                            value: {
+                                content: editorContent , data: {
+                                    url: SpeedwappSettings.host,
+                                    pageTitle: SpeedwappSettings.page_title
+                                }
+                            }
+                        },
+                        SpeedwappSettings.wpurl
+                    );
+                }
+                break;
+            case 'speedwapp_editor_ready':
+                // Editor is Loaded
+                editorContainer.classList.remove('speedwapp-loading');
+                break;
+            case 'init_widget_finish':
+                break;
+        }
+    }
+
+    const initialize = () => {
+        initEditorContent();
+        loadEditorIframe();
+
+        if (window.addEventListener) {
+            addEventListener("message", messageListener, false);
+        } else {
+            attachEvent("onmessage", messageListener);
+        }
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        initialize();
+    });
+}());

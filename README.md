@@ -5,9 +5,9 @@ Build responsive websites visually and get clean HTML & CSS effortlessly
 ![Drag and Drop Editor](https://raw.githubusercontent.com/akambi/speedwapp-vscode/master/assets/images/screenshot-1.gif)
 
 **Visual Builder**
-Drag and drop elements and customize them visually. The generated code is clear, easily maintainable, and compliant with the most up-to-date SEO requirements. The app also lets you import existing templates (HTML, CSS, Bootstrap), modify them, and re-export them.
+Drag and drop elements and customize them visually. The generated code is clear, easily maintainable, and compliant with the most up-to-date SEO requirements. The app also lets you import external templates (HTML, CSS, Bootstrap), modify them, and re-export them to your workspace.
   
-**Unique Features and Widget Style**  
+**Unique Features and Widget Styles**
 Create a captivating visual experience. Choose colours, add images or choose from a large library of free stock images. Add Video, Audio, Background Overlays, Box Shadows, Border Style, and many more.
 
 **Responsive Page**
@@ -22,7 +22,7 @@ Even if you decide to create a new page from scratch, Speedwapp will help you bu
 **Template Library**  
 With Speedwapp Builder, you don’t have to start from scratch to create your website. You have multiple templates to choose from different website categories, ranging from Photography, Graphic Design, Beauty Spa, Travelling Blog, etc.
 
-**Import A Template**  
+**Import External Templates**  
 Download any HTML & CSS template and customize it with the editor. Speedwapp allows you to import and reuse free popular bootstrap templates, HTML components across the web.
 
 **Export Your Website**  
@@ -30,8 +30,8 @@ Export your website code to your workspace.
 
 ## How to use the extension?
 
- - Create New Page with Speedwapp Website Builder - ctrl+shift+n or cmd+shift+n
- - Edit HTML with Speedwapp Website Builder - ctrl+shift+e or cmd+shift+e
+ - Create New Page with Speedwapp Website Builder - Ctrl+K N or Cmd+K N
+ - Edit HTML with Speedwapp Website Builder - Ctrl+Shift+V or Cmd+Shift+V
 
 ## FAQ
 
@@ -51,7 +51,7 @@ Yes, you can use Speedwapp for free, but only purchase a plan to unlock the prem
 
 ## Release Notes
 
-### 0.8.0
+### 0.8.6
 
 Alpha release of Speedwapp for Visual studio code
 

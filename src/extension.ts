@@ -150,8 +150,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 function getWebviewContent( webview: vscode.Webview, context: vscode.ExtensionContext, sourceWebviewUriRoot: string, pageTitle: string, isNew: boolean, uri?: vscode.Uri ) {
 
-    const isDebug = false;
-    const isProd = true;
+    const isDebug = true;
+    const isProd = false;
     const speedwappOrigin = isProd ? 'http://speedwapp.com' : 'https://sw-localhost';
 
     // Get path to resource on disk
@@ -182,7 +182,7 @@ function getWebviewContent( webview: vscode.Webview, context: vscode.ExtensionCo
         `style-src ${webview.cspSource} https: 'self' 'unsafe-inline'`,
         `object-src ${webview.cspSource} https: data:`,
         `font-src ${webview.cspSource} https: data:`,
-        `frame-src ${webview.cspSource} https://www.filepicker.io https://dialog.filepicker.io https://www.facebook.com`,
+        `frame-src ${webview.cspSource} ${speedwappOrigin} https://www.filepicker.io https://dialog.filepicker.io https://www.facebook.com`,
         `connect-src http://speedwapp.com ${speedwappOrigin} https://furcan.github.io https://github.io https://speedwapp.global.ssl.fastly.net`
     ];
 
@@ -224,7 +224,8 @@ function getWebviewContent( webview: vscode.Webview, context: vscode.ExtensionCo
                 \`;
 
                 var SpeedwappSettings = {
-                    "speedwapp_api_token": "${context.globalState.get('speedwapp_api_token', '')}",
+                    "speedwapp_api_token": "",
+//                    "speedwapp_api_token": "${context.globalState.get('speedwapp_api_token', '')}",
                     "host": "${sourceWebviewUriRoot}",
                     "page_title": "${pageTitle}",
                 };

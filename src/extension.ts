@@ -51,14 +51,13 @@ function createUnsavedFileWithContent(projectDirectory: string, filename: string
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-    const editWithSpeedwapp = (uri?: vscode.Uri, isNew: boolean = false) => {
-        // The code you place here will be executed every time your command is executed
+    const openSpeedwapp = (uri?: vscode.Uri, screen: string = 'start') => {
+        const isEdit = screen === 'edit';
 
         let projectDirectory: string = '';
         let sourceUri = uri;
         if (!(sourceUri instanceof vscode.Uri)) {
-            if (!isNew && vscode.window.activeTextEditor) {
+            if (isEdit && vscode.window.activeTextEditor) {
                 // Don't check for HTML files
                 sourceUri = vscode.window.activeTextEditor.document.uri;
             }
@@ -104,12 +103,20 @@ export function activate(context: vscode.ExtensionContext) {
             sourceWebviewUriRoot = webview.asWebviewUri(sourceRoot).toString();
         }
 
-        panel.webview.html = getWebviewContent(webview, context, sourceWebviewUriRoot, title, isNew, sourceUri);
+        if (screen === 'start') {
+            panel.webview.html = getWebviewContentForGetStartedPage(webview, context, sourceWebviewUriRoot, title, sourceUri);
+        } else {
+            const isNew = screen === 'new';
+            panel.webview.html = getWebviewContent(webview, context, sourceWebviewUriRoot, title, isNew, sourceUri);
+        }
 
         // Handle messages from the webview
         panel.webview.onDidReceiveMessage(
             message => {
                 switch (message.action) {
+                    case 'new_with_speedwapp':
+                        panel.webview.html = getWebviewContent(webview, context, sourceWebviewUriRoot, title, true, sourceUri);
+                        break;
                     case 'save_speedwapp_api_token':
                         context.globalState.update('speedwapp_api_token', message.apiToken);
                         break;
@@ -138,8 +145,21 @@ export function activate(context: vscode.ExtensionContext) {
     };
 
     const newWithSpeedwapp = (uri?: vscode.Uri) => {
-        editWithSpeedwapp(uri, true);
+        openSpeedwapp(uri, 'new');
     };
+
+    const editWithSpeedwapp = (uri?: vscode.Uri) => {
+        openSpeedwapp(uri, 'edit');
+    };
+
+    const speedwappExtension = vscode.extensions.getExtension('speedwapp.speedwapp');
+    const currentVersion = speedwappExtension!.packageJSON.version ?? "1.0.0";
+    const apiToken: string | undefined = context.globalState.get('speedwapp_api_token');
+    const lastVersion = context.globalState.get('speedwapp_version');
+    if (!apiToken && !lastVersion) {
+        void context.globalState.update('speedwapp_version', currentVersion);
+        openSpeedwapp();
+    }
 
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with registerCommand
@@ -148,10 +168,81 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('speedwapp.editWithSpeedwapp', editWithSpeedwapp));
 }
 
+function getWebviewContentForGetStartedPage( webview: vscode.Webview, context: vscode.ExtensionContext, sourceWebviewUriRoot: string, pageTitle: string, uri?: vscode.Uri ) {
+    const isProd = true;
+    const speedwappOrigin = isProd ? 'http://speedwapp.com' : 'https://sw-localhost';
+
+    // Get path to resource on disk
+    const getStartedCss: vscode.Uri = vscode.Uri.file(
+        path.join(context.extensionPath, 'assets', 'speedwapp-get-started.css')
+    );
+
+    const getStartedJs: vscode.Uri = vscode.Uri.file(
+        path.join(context.extensionPath, 'assets', 'speedwapp-get-started.js')
+    );
+
+    const csp = [
+        `default-src 'self' ${speedwappOrigin}`,
+        `img-src ${`vscode-file://vscode-app`} ${webview.cspSource} https: data: 'self' 'unsafe-inline'`,
+        `script-src ${webview.cspSource} https://connect.facebook.net https://platform.twitter.com https://use.fontawesome.com ${speedwappOrigin} https://speedwapp.global.ssl.fastly.net https://code.jquery.com https://ajax.googleapis.com ${isProd ? `` : `https://cdn.jsdelivr.net https://cdn.ckeditor.com`} 'self' 'unsafe-inline' 'unsafe-eval'`,
+        `style-src ${webview.cspSource} https: 'self' 'unsafe-inline'`,
+        `font-src ${webview.cspSource} https: data:`,
+        `frame-src ${webview.cspSource} ${speedwappOrigin} https://www.youtube.com`,
+    ];
+
+    return `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="Content-Security-Policy" content="${csp.join('; ')}">
+            <title>Load Speedwapp editor</title>
+            <link href="${webview.asWebviewUri(getStartedCss)}" rel="stylesheet">
+
+        </head>
+        <body>
+            <div class="wrap">
+                <div class="sw-getting-started">
+                    <div class="sw-getting-started-heading">
+                        <h2>Welcome to Speedwapp!</h2>
+                        <p>Speedwapp is the 1st visual builder for VS Code. It's really easy to use but if you need help, please check out our Getting Started video series on Youtube.</p>
+                        <p>PS: If you like the builder, please leave us a 5-star review on the Visual studio code marketplace.</p>
+                    </div>
+
+                    <div class="sw-getting-started-how-to-use sw-getting-started-free-ebook">
+                        <h3>How to use the extension?</h3>
+                        <p>Windows:
+                            <ul>
+                                <li>To create a new page, press Ctrl+K then the key N</li>
+                                <li>To edit an existing HTML page, press Ctrl+Shift+V</li>
+                            </ul>
+                        </p>
+                        <p>Mac:
+                            <ul>
+                                <li>To create a new page, press Cmd+K then the key N</li>
+                                <li>To edit an existing HTML page, press Cmd+Shift+V</li>
+                            </ul>
+                        </p>
+                        <div class="sw-getting-started-actions">
+                            <a
+                                href="#" onclick="newPage();return false;"
+                                class="button button-primary button-hero"
+                            >
+                                Create Your First Page
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src='${webview.asWebviewUri(getStartedJs)}' id='speedwapp-get-started-js' defer></script>
+        </body>
+        </html>`;
+}
+
 function getWebviewContent( webview: vscode.Webview, context: vscode.ExtensionContext, sourceWebviewUriRoot: string, pageTitle: string, isNew: boolean, uri?: vscode.Uri ) {
 
-    const isDebug = true;
-    const isProd = false;
+    const isDebug = false;
+    const isProd = true;
     const speedwappOrigin = isProd ? 'http://speedwapp.com' : 'https://sw-localhost';
 
     // Get path to resource on disk
@@ -224,8 +315,7 @@ function getWebviewContent( webview: vscode.Webview, context: vscode.ExtensionCo
                 \`;
 
                 var SpeedwappSettings = {
-                    "speedwapp_api_token": "",
-//                    "speedwapp_api_token": "${context.globalState.get('speedwapp_api_token', '')}",
+                    "speedwapp_api_token": "${context.globalState.get('speedwapp_api_token', '')}",
                     "host": "${sourceWebviewUriRoot}",
                     "page_title": "${pageTitle}",
                 };

@@ -2,7 +2,7 @@
 	"name": "speedwapp",
 	"displayName": "Speedwapp",
 	"description": "Speedwapp is a visually builder that lets you create responsive websites with clean HTML & CSS effortlessly.",
-	"version": "0.8.6",
+	"version": "0.9.0",
 	"publisher": "speedwapp",
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"author": {
@@ -27,7 +27,8 @@
 	"activationEvents": [
 		"onLanguage:html",
 		"onCommand:speedwapp.newWithSpeedwapp",
-		"onCommand:speedwapp.editWithSpeedwapp"
+		"onCommand:speedwapp.editWithSpeedwapp",
+		"onStartupFinished"
 	],
 	"main": "./dist/extension.js",
 	"bugs": {

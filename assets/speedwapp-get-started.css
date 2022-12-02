@@ -53,11 +53,11 @@ html, body {
 
 .sw-getting-started-actions a {
   background-color: #ffae00;
-    border-radius: 6px;
-    color: #000;
-    display: inline-block;
-    margin-top: 15px;
-    padding: 15px 20px;
-    text-align: center;
-    text-decoration: none;
+  border-radius: 6px;
+  color: #000;
+  display: inline-block;
+  margin-top: 15px;
+  padding: 15px 20px;
+  text-align: center;
+  text-decoration: none;
 }

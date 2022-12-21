@@ -71,7 +71,7 @@
 
     const messageListener = (event) => {
         if (!event || !event.source || event.source.app_domain !== 'https://speedwapp.com') {
-        //if (!event || !event.source || event.source.app_domain !== 'https://sw-localhost') {
+        // if (!event || !event.source || event.source.app_domain !== 'https://sw-localhost') {
                 return;
         }
 

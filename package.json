@@ -1,8 +1,8 @@
 {
 	"name": "speedwapp",
 	"displayName": "Speedwapp",
-	"description": "Speedwapp is a visually builder that lets you create responsive websites with clean HTML & CSS effortlessly.",
-	"version": "0.9.1",
+	"description": "Speedwapp is a visual builder that lets you create responsive websites with clean HTML & CSS effortlessly.",
+	"version": "0.9.5",
 	"publisher": "speedwapp",
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"author": {
@@ -17,12 +17,11 @@
 		"vscode": "^1.68.0"
 	},
 	"categories": [
-		"Programming Languages",
 		"Snippets",
 		"Themes"
 	],
 	"keywords": [
-		"browser", "html", "css", "preview", "builder", "livepreview"
+		"snippet", "snippets", "html", "css", "preview", "visual", "builder", "livepreview", "template", "javascript"
 	],
 	"activationEvents": [
 		"onLanguage:html",

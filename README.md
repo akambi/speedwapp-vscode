@@ -51,9 +51,9 @@ Yes, you can use Speedwapp for free, but only purchase a plan to unlock the prem
 
 ## Release Notes
 
-### 0.9.1
+### 0.9.5
 
-Alpha release of Speedwapp for Visual studio code
+Beta release of Speedwapp for Visual studio code
 
 -----------------------------------------------------------------------------------------------------------
 ### For more information

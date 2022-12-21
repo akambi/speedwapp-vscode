@@ -3,7 +3,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { tmpdir } from "os";
-import { basename } from 'path';
 
 function getProjectDirectoryPath(
     sourceUri: vscode.Uri,
@@ -201,35 +200,36 @@ function getWebviewContentForGetStartedPage( webview: vscode.Webview, context: v
 
         </head>
         <body>
-            <div class="wrap">
-                <div class="sw-getting-started">
-                    <div class="sw-getting-started-heading">
-                        <h2>Welcome to Speedwapp!</h2>
-                        <p>Speedwapp is the 1st visual builder for VS Code. It's really easy to use but if you need help, please check out our Getting Started video series on Youtube.</p>
-                        <p>PS: If you like the builder, please leave us a 5-star review on the Visual studio code marketplace.</p>
+            <div class="sw-getting-started">
+                <div class="sw-getting-started-heading">
+                    <h1>Welcome to Speedwapp!</h1>
+                    <p>Speedwapp is the 1st visual builder for VS Code. It's really easy to use but if you need help, please check out our Getting Started video series on Youtube.</p>
+                    <div class="sw-getting-started-actions">
+                        <a
+                            href="#" onclick="newPage();return false;"
+                            class="button button-primary button-hero"
+                        >
+                            Create Your First Page
+                        </a>
                     </div>
+                </div>
 
-                    <div class="sw-getting-started-how-to-use sw-getting-started-free-ebook">
-                        <h3>How to use the extension?</h3>
-                        <p>Windows:
+                <div class="sw-getting-started-how-to-use sw-getting-started-free-ebook">
+                    <h2>How to use the extension?</h2>
+                    <div class="sw-how-to">
+                        <div>
+                            <h3>Windows</h3>
                             <ul>
-                                <li>To create a new page, press Ctrl+K then the key N</li>
-                                <li>To edit an existing HTML page, press Ctrl+Shift+V</li>
+                                <li>To create a new page,<br/> press Ctrl+K then the key N</li>
+                                <li>To edit an existing HTML page,<br/> press Ctrl+Shift+V</li>
                             </ul>
-                        </p>
-                        <p>Mac:
+                        </div>
+                        <div>
+                            <h3>Mac</h3>
                             <ul>
-                                <li>To create a new page, press Cmd+K then the key N</li>
-                                <li>To edit an existing HTML page, press Cmd+Shift+V</li>
+                                <li>To create a new page,<br/> press Cmd+K then the key N</li>
+                                <li>To edit an existing HTML page,<br/> press Cmd+Shift+V</li>
                             </ul>
-                        </p>
-                        <div class="sw-getting-started-actions">
-                            <a
-                                href="#" onclick="newPage();return false;"
-                                class="button button-primary button-hero"
-                            >
-                                Create Your First Page
-                            </a>
                         </div>
                     </div>
                 </div>

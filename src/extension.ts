@@ -289,6 +289,29 @@ function getWebviewContent( webview: vscode.Webview, context: vscode.ExtensionCo
             <link href="${webview.asWebviewUri(globalCss)}" rel="stylesheet">
         </head>
         <body>
+            <style>
+                #loading {
+                    position: fixed;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    height: 100%;
+                    top: 0;
+                    left: 0;
+                    opacity: 1;
+                    background-color: #fff;
+                    z-index: 2099;
+                }
+
+                #loading-image {
+                    z-index: 2100;
+                }
+            </style>
+
+            <div id="loading" class="ajax_overlay">
+                <div id="loading-image" class="ajax_loader"></div>
+            </div>
             <div id="speedwapp-editor-container" name="speedwapp-editor"></div>
             <script id='speedwapp-editor-full-screen-js-before' type="text/javascript">
                 ( function( pageData ) {

@@ -76,6 +76,9 @@
         }
 
         switch (event.data.type) {
+            case 'speedwapp_styles_loaded':
+                document.getElementById('loading').style.display = 'none';
+                break;
             case 'widget_check':
                 event.source.postMessage({
                     data_type: 'widget_info',
@@ -87,6 +90,7 @@
                 }, SpeedwappSettings.wpurl);
                 break;
             case 'reload_iframe':
+                document.getElementById('loading').style.display = 'block';
                 loadEditorIframe();
                 break;
             case 'copy_codes_to_workspace':
@@ -131,11 +135,12 @@
             case 'speedwapp_editor_ready':
                 // Editor is Loaded
                 editorContainer.classList.remove('speedwapp-loading');
+                document.getElementById('loading').style.display = 'none';
                 break;
             case 'init_widget_finish':
                 break;
         }
-    }
+    };
 
     const initialize = () => {
         initEditorContent();

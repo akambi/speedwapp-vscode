@@ -119,6 +119,14 @@ export function activate(context: vscode.ExtensionContext) {
                     case 'save_speedwapp_api_token':
                         context.globalState.update('speedwapp_api_token', message.apiToken);
                         break;
+                    case 'write_a_review':
+                        const reviewUrl = 'https://marketplace.visualstudio.com/items?itemName=speedwapp.speedwapp&ssr=false#review-details';
+                        if (vscode.env) {
+                            vscode.env.openExternal(vscode.Uri.parse(reviewUrl));
+                        } else {
+                            vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(reviewUrl));
+                        }
+                        break;
                     case 'copy_codesource_to_workspace':
                         let filename = 'Speedwapp - Unsaved New';
                         if (sourceUri && sourceUri?.fsPath) {

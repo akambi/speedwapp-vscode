@@ -93,6 +93,11 @@
                 document.getElementById('loading').style.display = 'block';
                 loadEditorIframe();
                 break;
+            case 'write_a_review':
+                vscode.postMessage({
+                    action: 'write_a_review',
+                });
+                break;
             case 'copy_codes_to_workspace':
                 vscode.postMessage({
                     action: 'copy_codesource_to_workspace',

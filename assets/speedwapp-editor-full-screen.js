@@ -134,6 +134,12 @@
                 break;
             case 'init_widget_finish':
                 break;
+            case 'openExternalLink':
+                vscode.postMessage({
+                    action: 'openExternalLink',
+                    link: event.data.link,
+                });
+                break;
         }
     }
 

@@ -31,7 +31,6 @@ Export your website code to your workspace.
 ## How to use the extension?
 
  - Create New Page with Speedwapp Website Builder - Ctrl+K N or Cmd+K N
- - Edit HTML with Speedwapp Website Builder - Ctrl+Shift+V or Cmd+Shift+V
 
 ## FAQ
 
@@ -51,7 +50,7 @@ Yes, you can use Speedwapp for free, but only purchase a plan to unlock the prem
 
 ## Release Notes
 
-### 0.9.7
+### 0.9.8
 
 Beta release of Speedwapp for Visual studio code
 

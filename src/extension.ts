@@ -143,7 +143,10 @@ export function activate(context: vscode.ExtensionContext) {
                         if (message.css) {
                             createUnsavedFileWithContent(projectDirectory, `${filename}.css`, message.css);
                         }
-                        break;    
+                        break;
+                    case "open_external_link":
+                        vscode.env.openExternal(vscode.Uri.parse(message.link));
+                        break;
                 }
             },
             undefined,
